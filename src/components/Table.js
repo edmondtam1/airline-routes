@@ -32,7 +32,9 @@ export default class Table extends Component {
     });
 
     const lowerBound = (this.state.page) * this.state.perPage;
-    const upperBound = (this.state.page + 1) * this.state.perPage;
+    const upperBound = Math.min((this.state.page + 1) * this.state.perPage,
+      this.props.rows.length);
+
     const filteredRows = tbodyRows.slice(lowerBound, upperBound);
 
     return (
@@ -59,7 +61,7 @@ export default class Table extends Component {
           <button
             id="next"
             onClick={this.handleClickNext}
-            disabled={this.state.page >= Math.floor(this.props.rows.length / this.state.perPage) - 1}
+            disabled={this.state.page >= Math.ceil(this.props.rows.length / this.state.perPage) - 1}
           >
             Next Page
         </button>
