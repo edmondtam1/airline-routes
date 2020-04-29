@@ -4,10 +4,12 @@ import DATA from './data';
 import Select from './components/Select';
 import Table from './components/Table';
 
+export const defaultState = 'all';
+
 class App extends Component {
   state = {
-    airline: 'all',
-    airport: 'all',
+    airline: defaultState,
+    airport: defaultState,
   }
 
   formatValue = (property, value) => {
@@ -19,11 +21,11 @@ class App extends Component {
   };
 
   routeHasCurrentAirline = (route) => {
-    return route.airline === this.state.airline || this.state.airline === 'all';
+    return route.airline === this.state.airline || this.state.airline === defaultState;
   };
 
   routeHasCurrentAirport = (route) => {
-    return route.src === this.state.airport || route.dest === this.state.airport || this.state.airport === 'all';
+    return route.src === this.state.airport || route.dest === this.state.airport || this.state.airport === defaultState;
   }
 
   onAirlineFilter = (airline) => this.setState({ airline });
@@ -31,8 +33,10 @@ class App extends Component {
   onAirportFilter = (airport) => this.setState({ airport });
 
   handleClear = () => {
-    this.setState({ airline: 'all', airport: 'all' });
+    this.setState({ airline: defaultState, airport: defaultState });
   }
+
+  isReset = () => this.state.airline === defaultState && this.state.airport === defaultState;
 
   render() {
     const columns = [
@@ -46,11 +50,11 @@ class App extends Component {
     });
 
     const filteredAirlines = DATA.airlines.filter(airline => {
-      return airline.id === this.state.airline || this.state.airline === 'all';
+      return airline.id === this.state.airline || this.state.airline === defaultState;
     });
 
     const filteredAirports = DATA.airports.filter(airport => {
-      return airport.code === this.state.airport || this.state.airport === 'all';
+      return airport.code === this.state.airport || this.state.airport === defaultState;
     });
 
     const subFilteredAirlines = filteredAirlines.filter(airline => {
@@ -89,7 +93,7 @@ class App extends Component {
             <button
               name="clearFilters"
               onClick={this.handleClear}
-              disabled={this.state.airline === 'all' && this.state.airport === 'all'}
+              disabled={this.isReset()}
             >
               Clear filters
             </button>
@@ -98,6 +102,7 @@ class App extends Component {
             columns={columns}
             rows={filteredRoutes}
             format={this.formatValue}
+            key={this.state.airline + ':' + this.state.airport}
           />
         </section>
       </div>

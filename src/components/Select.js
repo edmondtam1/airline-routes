@@ -5,7 +5,6 @@ export default class Select extends Component {
     e.preventDefault();
     let value = e.target.value;
     if (this.props.valueKey === 'id' && value !== 'all') value = +value;
-    console.log(value);
     this.props.onSelect(value);
   }
 
