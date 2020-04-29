@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import DATA from './data';
+import Map from './components/Map';
 import Select from './components/Select';
 import Table from './components/Table';
 
@@ -10,13 +11,14 @@ class App extends Component {
   state = {
     airline: defaultState,
     airport: defaultState,
+    route: null,
   }
 
   formatValue = (property, value) => {
     if (property === 'airline') {
-      return DATA.getAirlineById(value);
+      return DATA.getAirlineById(value).name;
     } else {
-      return DATA.getAirportByCode(value);
+      return DATA.getAirportByCode(value).name;
     }
   };
 
@@ -33,10 +35,17 @@ class App extends Component {
   onAirportFilter = (airport) => this.setState({ airport });
 
   handleClear = () => {
-    this.setState({ airline: defaultState, airport: defaultState });
+    this.setState({ airline: defaultState, airport: defaultState, route: null });
   }
 
   isReset = () => this.state.airline === defaultState && this.state.airport === defaultState;
+
+  onMapSetRoute = (route) => {
+    const code = route.match(/(\d+)([A-Z]{3})([A-Z]{3})/);
+    this.setState({ airline: +code[1], airport: code[2], route });
+  }
+
+  onMapResetRoutes = () => this.handleClear();
 
   render() {
     const columns = [
@@ -46,7 +55,11 @@ class App extends Component {
     ];
 
     const filteredRoutes = DATA.routes.filter(route => {
-      return this.routeHasCurrentAirline(route) && this.routeHasCurrentAirport(route);
+      if (this.state.route) {
+        return this.state.route === `${route.airline}${route.src}${route.dest}`;
+      } else {
+        return this.routeHasCurrentAirline(route) && this.routeHasCurrentAirport(route);
+      }
     });
 
     const filteredAirlines = DATA.airlines.filter(airline => {
@@ -65,12 +78,18 @@ class App extends Component {
       return filteredRoutes.some(route => route.src === airport.code || route.dest === airport.code);
     });
 
+    const mapOnClick = this.state.route ? this.onMapResetRoutes : this.onMapSetRoute;
+
     return (
-      <div className="app">
+      <div className="app" >
         <header className="header">
           <h1 className="title">Airline Routes</h1>
         </header>
         <section>
+          <Map
+            routes={filteredRoutes}
+            onClick={mapOnClick}
+          />
           <p>
             Show routes on
             <Select

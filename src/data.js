@@ -1395,8 +1395,8 @@ const airports = [
 
 ];
 
-const getAirlineById = (id) => airlines.filter((a) => a.id === id)[0].name;
+const getAirlineById = (id) => airlines.filter((a) => a.id === id)[0];
 
-const getAirportByCode = (code) => airports.filter((a) => a.code === code)[0].name;
+const getAirportByCode = (code) => airports.filter((a) => a.code === code)[0];
 
 export default { routes, airlines, airports, getAirlineById, getAirportByCode };

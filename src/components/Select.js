@@ -16,7 +16,7 @@ export default class Select extends Component {
 
   render() {
     const defaultOption = (<option key='all' value='all'>
-      {this.props.allTitle}
+      {this.props.allTitle} ({this.props.options.length})
     </option>);
 
     const options = [defaultOption].concat(this.props.options.map(option => {
